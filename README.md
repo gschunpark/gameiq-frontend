@@ -9,8 +9,8 @@ Responsive React + Vite football app. The original branding and sign-in implemen
 - Rulebooks is a Coming Soon screen for future user-uploaded team rulebooks. Upload and PDF-library controls are not exposed in the active app.
 - Game Scenarios remains a placeholder.
 - Home and Profile no longer advertise lessons, show lesson totals, or link to the retired lesson reader. Old lesson URLs display the Training placeholder.
-- Accounts, sign-in, profile editing and pictures, teams, coach/member profiles, team management, privacy, settings, password changes, logout, and account deletion remain available.
-- Previously saved progress, earned XP, and uploaded files have not been cleared. Previously earned XP remains visible.
+- Sign In and Create Account now enter a temporary preview with any details or blank fields. No account lookup, password verification, account registration, or account persistence runs. Profile, pictures, team edits, and preferences work in memory only. Logout, End Preview, or reload clears them. Password changes and recovery are unavailable until real authentication is added.
+- Previously stored browser data is left untouched and is not loaded into the preview. New account or session data is never written to localStorage, sessionStorage, or IndexedDB.
 
 ## Run and validate
 
@@ -21,13 +21,13 @@ npm run build
 npm test
 ```
 
-On Windows with restricted PowerShell scripts, use `npm.cmd`. Password hashing requires localhost or HTTPS. To run the data checks without test-runner subprocesses, use `node --test --test-isolation=none tests/foundation.test.js` (Node 22+).
+On Windows with restricted PowerShell scripts, use `npm.cmd`. To run the data checks without test-runner subprocesses, use `node --test --test-isolation=none tests/foundation.test.js` (Node 22+).
 
-`node tests/browser-qa.mjs` checks the production build with an installed Windows Edge, using an isolated hidden browser profile in ignored `.qa/`. It tests eight viewport sizes, unavailable lesson/upload flows, accounts, profile pictures, teams, settings, and account deletion. It needs permission to start Edge and listen on local ports 5175 and 9224.
+`node tests/browser-qa.mjs` checks the production build with an installed Windows Edge, using an isolated hidden browser profile in ignored `.qa/`. It tests unrestricted preview entry, session-only profile/team/preferences, responsive layouts, and resets after reload/logout. Browser storage is instrumented to reject any read/write attempt during the test. It needs permission to start Edge and listen on local ports 5175 and 9224.
 
 ## Data and integration boundaries
 
-This is a browser-local development app, not production authentication. Account data lives in `localStorage` under `gameiq.local.v1`. Passwords are salted PBKDF2-SHA256 hashes, not plaintext. Existing PDF blobs remain in IndexedDB (`gameiq-files`). Clearing browser data can remove local data.
+The active app keeps its preview state in React memory only. No credentials are retained, no account record is saved, and no previous session is restored. The earlier authentication and storage adapters are retained as inactive code for future integration. Old localStorage records (`gameiq.local.v1`) and PDF blobs (`gameiq-files`) are not read, changed, or removed by preview entry.
 
 Real shared accounts, recovery emails, cross-device synchronization, shared teams, enforceable privacy/permissions, and notifications need a secure backend. The app remains a responsive web app; native iPhone/Android packaging is not configured.
 

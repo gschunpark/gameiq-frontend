@@ -1,0 +1,226 @@
+/* White app surfaces with blue actions, warm yellow cards, and red accents. */
+:root {
+  color-scheme: light;
+  --app-bg: #ffffff;
+  --card: #ffffff;
+  --ink: #1c2941;
+  --muted: #647087;
+  --blue: #2859e8;
+  --highlight: #2859e8;
+  --lime: #2859e8;
+  --red: #e34d59;
+  --yellow: #ffce48;
+  --line: #e8ecf2;
+  color: var(--ink);
+  background: #fff;
+}
+
+body, .game-app { background: #fff; color: var(--ink); }
+input, select, textarea { color: var(--ink); }
+button, a { -webkit-tap-highlight-color: transparent; }
+.brand { color: var(--ink); }
+.brand-mark { color: var(--blue); filter: none; }
+.brand-name span { color: var(--blue); }
+.game-app h1 { font-size: clamp(25px, 2.6vw, 34px); letter-spacing: -1.2px; }
+.game-app h2, .app-modal h2 { font-size: 20px; letter-spacing: -.65px; }
+.game-app h3, .app-modal h3 { color: var(--ink); }
+.muted { color: var(--muted); }
+.app-eyebrow { color: #7b8394; letter-spacing: 1.3px; font-size: 9px; }
+.page-heading { margin-bottom: 28px; }
+.page-heading .muted { font-size: 13px; }
+.app-card { border-color: var(--line); border-radius: 22px; background: #fff; box-shadow: 0 6px 24px #243a6206; }
+.app-content { max-width: 1280px; padding-top: 32px; }
+
+/* Navigation behaves like an app shell at every size. */
+.app-sidebar { background: #fff; border-color: var(--line); width: 220px; padding-left: 18px; padding-right: 18px; }
+.app-sidebar .brand-name { font-size: 32px; }
+.sidebar-caption { color: #8992a3; font-size: 7px; margin-bottom: 32px; letter-spacing: 1.1px; }
+.app-sidebar nav { gap: 7px; }
+.app-sidebar nav a { color: #778094; font-size: 13px; min-height: 52px; border-radius: 15px; }
+.app-sidebar nav a:hover { background: #f7f9fd; color: var(--blue); }
+.app-sidebar nav a.active { background: #edf2ff; border-color: transparent; color: var(--blue); }
+.nav-indicator { background: var(--blue); box-shadow: none; }
+.sidebar-promo { background: #fff8df; border: 0; border-radius: 20px; padding: 22px 18px; }
+.sidebar-promo svg { color: #be8321; }
+.sidebar-promo strong { color: #473b21; }
+.sidebar-promo p { color: #837554; }
+.sidebar-profile { border-top: 1px solid var(--line); margin-top: 22px; padding-top: 20px; }
+.sidebar-profile strong { color: var(--ink); }
+.sidebar-profile small, .sidebar-profile > svg { color: #8790a1; }
+.app-main { margin-left: 220px; }
+.app-topbar { position: sticky; top: 0; z-index: 15; min-height: 76px; background: #ffffffed; border-color: var(--line); backdrop-filter: blur(16px); }
+.desktop-top-title { color: #7b869a; font-size: 8px; }
+.desktop-top-title svg { color: var(--red); }
+.dev-pill { color: #7d6726; border-color: #f6e5ab; background: #fff9e8; border-radius: 7px; letter-spacing: .7px; }
+.development-bar { background: #fafbfe; color: #7c8595; border-color: #f0f2f6; padding-top: 7px; padding-bottom: 7px; }
+.icon-button { background: #f7f9fc; border-color: var(--line); color: #606d82; border-radius: 13px; }
+.icon-button:hover { background: #edf2ff; color: var(--blue); }
+.avatar { background: #edf2ff; color: var(--blue); border-color: #e0e8ff; }
+.avatar.large { border-color: #dce6ff; box-shadow: 0 0 0 5px #f6f8ff; }
+.app-button { min-height: 48px; border: 1px solid transparent; border-radius: 14px; background: var(--blue); color: #fff; font-size: 13px; box-shadow: 0 5px 12px #2859e816; }
+.app-button:hover:not(:disabled) { background: #1949d4; box-shadow: 0 6px 18px #2859e825; }
+.app-button.secondary { background: #f0f4ff; border-color: #e6ecff; color: #254eb8; box-shadow: none; }
+.app-button.secondary:hover:not(:disabled) { background: #e3ebff; }
+.text-button { color: #2859d8; font-weight: 600; }
+.text-button:hover { color: #173d9c; }
+.pill { background: #eef3ff; color: #3559ad; border: 0; border-radius: 7px; padding: 6px 8px; font-size: 8px; }
+.pill.completed { background: #e9f5ef; color: #227054; }
+.feature-icon { background: #eef3ff; border: 0; color: var(--blue); border-radius: 14px; }
+.section-heading h2 { font-size: 18px; }
+.section-heading.compact > svg { color: var(--blue); }
+
+/* Home: blue progress, a yellow training tile, and color-coded tools. */
+.home-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr); gap: 20px; }
+.xp-overview { position: relative; background: #f5f8ff; border-color: #e9effc; padding: 28px; }
+.xp-overview .app-eyebrow { color: #6c7e9d; }
+.xp-overview .pill { background: #fff; color: var(--blue); }
+.xp-value { color: var(--blue); font-size: clamp(54px, 5vw, 72px); margin: 28px 0 20px; letter-spacing: -3px; }
+.xp-value > span { color: #7d8ba3; font-size: 12px; letter-spacing: 0; }
+.xp-overview > .muted { color: #546681; font-size: 12px; }
+.xp-overview > .small { color: #7d8ba3; font-size: 10px; }
+.continue-card { position: relative; isolation: isolate; overflow: hidden; padding: 28px; background: #fff6d7; border-color: #fff0b7; gap: 5px; }
+.continue-card::after { content: ''; position: absolute; z-index: -1; width: 150px; height: 150px; right: -44px; top: -35px; border: 25px solid #ffdf766b; border-radius: 50%; box-shadow: 0 0 0 20px #ffe9a150; pointer-events: none; }
+.continue-card .feature-icon { display: inline-flex; margin-bottom: 12px; background: #fff; color: #b27a11; border: 0; width: 40px; height: 40px; border-radius: 12px; }
+.continue-card .app-eyebrow { color: #956e16; font-size: 8px; }
+.continue-card h2 { color: #3f351d; font-size: 25px; max-width: 340px; }
+.continue-card p:not(.app-eyebrow) { color: #7a6b46; font-size: 12px; max-width: 340px; margin: 6px 0 18px; }
+.continue-card .app-button { margin-top: auto; align-self: flex-start; width: auto; }
+.toolkit-dots { display: flex; gap: 5px; }
+.toolkit-dots i { width: 6px; height: 6px; border-radius: 50%; background: var(--red); }
+.toolkit-dots i:nth-child(2) { background: var(--yellow); }
+.toolkit-dots i:nth-child(3) { background: var(--blue); }
+.resource-card { padding: 24px; border-color: var(--line); background: #fff; color: var(--blue); border-radius: 20px; transition: border-color 150ms ease, background 150ms ease; }
+.resource-card:hover { background: #fafbff; border-color: #cdd9f5; }
+.resource-card strong { color: var(--ink); font-size: 14px; }
+.resource-card small { color: var(--muted); }
+.resource-card > span.resource-icon { display: grid; place-items: center; flex: 0 0 48px; height: 48px; border-radius: 15px; color: var(--blue); background: #eef3ff; }
+.resource-red > span.resource-icon { color: #d84a57; background: #fff0f1; }
+.resource-red > svg:last-child { color: #c85b64; }
+.resource-blue > span.resource-icon { color: #315cdb; background: #edf3ff; }
+.empty-state, .completion-card { background: #fff; border-color: var(--line); padding: 44px; box-shadow: 0 8px 32px #243a6206; }
+.empty-state .feature-icon { background: #fff5d6; color: #a77b19; }
+.empty-state .pill { background: #fff0f1; color: #bd4b56; }
+.empty-state p { max-width: 420px; }
+
+/* Profiles, teams, forms, and dialogs use the same light surfaces. */
+.profile-xp { background: #f3f6ff; border-color: #e5ecff; }
+.profile-xp h2 span, .team-xp strong { color: var(--blue); }
+.profile-xp .row { color: var(--muted); }
+.profile-xp .row b { color: var(--ink); }
+.profile-bio { color: #5d6c82; }
+.app-progress { background: #e3eafa; }
+.app-progress span { background: var(--blue); }
+.achievement { background: #fbfcfe; border-color: var(--line); color: #68778c; border-radius: 18px; }
+.achievement > span:first-child { color: #8a95a5; border-color: #e8ecf3; background: #f0f3f8; }
+.achievement strong { color: #54647d; }
+.achievement small, .achievement-state { color: #758298; }
+.achievement.unlocked { background: #fff8e5; border-color: #f4e6ba; }
+.achievement.unlocked > span:first-child { color: #a57513; background: #ffefb8; border-color: #f9e3a0; }
+.achievement.unlocked .achievement-state { color: #986917; }
+.achievement-grid { grid-template-columns: repeat(auto-fit, minmax(130px, 190px)); }
+.field { color: #53627a; font-weight: 500; }
+.field input, .field textarea, .field select, .search-input { color: var(--ink); background: #fafbfe; border-color: #e1e6ef; border-radius: 13px; font-weight: 400; }
+.field input::placeholder, .field textarea::placeholder, .search-input::placeholder { color: #8a95a6; }
+.field input:focus, .field textarea:focus, .field select:focus, .search-input:focus { border-color: #8ba7f7; }
+.image-input label, .checkbox-label { color: #53627a; }
+.image-input input::file-selector-button { background: #edf2ff; color: #3156b6; border-color: #dee7ff; border-radius: 10px; }
+.local-notice { background: #f6f8fd; border-color: #e9edf5; color: #64748d; border-radius: 13px; }
+.team-xp span { color: #7887a0; }
+.coach-card { color: var(--ink); }
+.coach-card small, .member-row small { color: #758299; }
+.coach-card > svg { color: var(--blue); }
+.invite-code { color: var(--blue); background: #f2f6ff; border-color: #c3d2f5; }
+.member-row { color: var(--ink); border-color: var(--line); }
+.member-row .member-stats { color: #2d58c7; }
+.member-row > svg, .leaderboard-place { color: #7b8da8; }
+.team-xp { border-color: var(--line); }
+.settings-list { background: #fff; border-color: var(--line); }
+.settings-row { color: #42516a; border-color: var(--line); }
+.settings-row:hover { color: var(--blue); }
+.settings-row > svg:first-child { color: #6886bd; }
+.settings-row:nth-child(4) > svg:first-child { color: #d85c65; }
+.settings-row:nth-child(5) > svg:first-child { color: #b58a24; }
+.settings-row > svg:last-child { color: #a0aaba; }
+.toggle-row { color: #4a5971; border-color: var(--line); }
+.account-info span { color: #6a7890; }
+.app-modal { background: #fff; color: var(--ink); border: 1px solid #e6ebf3; border-radius: 26px; box-shadow: 0 24px 90px #15285024; }
+.app-modal::backdrop { background: #263b6059; backdrop-filter: blur(6px); }
+.app-modal .profile-header h1 { color: var(--ink); }
+.app-modal .achievement-grid { grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); }
+.danger-text { color: #c63d50 !important; }
+.danger-button { color: #fff; background: #cb4055 !important; border-color: #cb4055 !important; }
+.error, .global-error { background: #fff0f2; color: #b5364a; border-color: #ffd2d9; }
+.success { color: #26745c; }
+
+/* A focused welcome screen, rather than a split marketing layout. */
+.auth-shell { display: block; min-height: 100svh; background: #fff; }
+.auth-shell .story-panel { display: none; }
+.auth-shell .login-panel { min-height: 100svh; width: min(100%, 540px); padding: max(24px, env(safe-area-inset-top)) 30px max(20px, env(safe-area-inset-bottom)); margin: 0 auto; background: #fff; }
+.auth-shell .login-content { width: 100%; margin: 32px auto; padding: 36px; border-color: #edf0f6; border-radius: 28px; background: #fff; box-shadow: 0 15px 60px #1b396d08; }
+.auth-brand { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 40px; }
+.auth-brand::after { content: ''; width: 9px; height: 9px; border-radius: 50%; background: var(--red); box-shadow: -15px 0 0 var(--yellow), -30px 0 0 var(--blue); margin-right: 2px; }
+.auth-content h2 { font-family: 'DM Sans', sans-serif; font-size: clamp(30px, 4vw, 38px); font-weight: 700; letter-spacing: -1.5px; line-height: 1.16; text-transform: none; color: var(--ink); }
+.auth-content h2 span { color: var(--blue); }
+.auth-content .form-kicker { color: #c8535f; font-size: 8px; letter-spacing: 1.5px; }
+.auth-content .form-subtitle { color: #728096; font-size: 13px; line-height: 1.8; margin: 18px 0 28px; }
+.auth-shell .login-top, .auth-shell .login-footer { color: #8a93a1; font-size: 8px; }
+.auth-shell .login-top { justify-content: space-between; }
+.password-field { color: var(--ink); background: #fafbfe; border-color: #e1e6ef; border-radius: 13px; }
+.password-field button { color: #4e6da9; }
+.development-note { color: #7a879b; border-color: #edf0f5; font-size: 10px; }
+.development-note svg { color: #ca9a22; }
+.auth-switch { color: #7c8799; }
+
+@media (max-width: 1200px) {
+  .app-sidebar { width: 200px; }
+  .app-main { margin-left: 200px; }
+}
+@media (max-width: 900px) {
+  .app-main { margin-left: 0; }
+  .bottom-nav { left: max(12px, env(safe-area-inset-left)); right: max(12px, env(safe-area-inset-right)); bottom: max(10px, env(safe-area-inset-bottom)); border: 1px solid #e9edf4; border-radius: 23px; background: #ffffffed; box-shadow: 0 5px 28px #1d38631a; padding: 8px; }
+  .bottom-nav a { color: #8993a5; border-radius: 17px; gap: 5px; font-size: 9px; padding: 9px 7px; }
+  .bottom-nav a.active { color: var(--blue); background: #edf2ff; }
+  .bottom-nav a.active::before { display: none; }
+  .app-topbar .icon-button { color: #6d7a91; background: #f7f9fd; border: 1px solid #edf0f6; }
+  .app-topbar .dev-pill { background: #fff8e3; }
+}
+@media (max-width: 760px) {
+  .home-grid { grid-template-columns: minmax(0, 1fr); }
+  .auth-shell .login-panel { width: min(100%, 500px); }
+  .auth-shell .login-content { width: 100%; }
+}
+@media (max-width: 600px) {
+  .game-app h1 { font-size: 27px; letter-spacing: -.95px; }
+  .app-content { padding-top: 25px; }
+  .app-card { border-radius: 21px; }
+  .home-grid { gap: 16px; }
+  .xp-overview { padding: 22px; }
+  .xp-value { margin: 18px 0 12px; font-size: 56px; }
+  .continue-card { padding: 24px; }
+  .continue-card .feature-icon { position: absolute; top: 20px; right: 20px; width: 34px; height: 34px; }
+  .continue-card .feature-icon svg { width: 23px; height: 23px; }
+  .continue-card h2 { font-size: 25px; max-width: 240px; }
+  .continue-card p:not(.app-eyebrow) { max-width: 260px; }
+  .continue-card .app-button { margin-top: 6px; width: 100%; }
+  .toolkit-grid { gap: 12px; }
+  .resource-card { padding: 20px; }
+  .resource-card > span.resource-icon { flex-basis: 42px; height: 42px; border-radius: 13px; }
+  .resource-card strong { font-size: 13px; }
+  .resource-card small { font-size: 10px; }
+  .empty-state, .completion-card { padding: 32px 22px; }
+  .auth-shell .login-panel { padding-left: max(22px, env(safe-area-inset-left)); padding-right: max(22px, env(safe-area-inset-right)); }
+  .auth-shell .login-content { padding: 24px 0; border: 0; box-shadow: none; margin: 20px 0; }
+  .auth-content h2 { font-size: 36px; }
+  .auth-brand { margin-bottom: 44px; }
+}
+@media (max-width: 360px) {
+  .app-topbar .row { gap: 2px; }
+  .app-topbar .brand-name { font-size: 23px; }
+  .app-topbar .dev-pill { font-size: 6px; padding: 4px; }
+  .game-app h1 { font-size: 25px; }
+  .resource-card { gap: 12px; padding: 17px; }
+}
+@media (max-height: 500px) and (max-width: 900px) {
+  .bottom-nav { padding: 4px; bottom: max(6px, env(safe-area-inset-bottom)); }
+  .bottom-nav a { padding: 5px; }
+}

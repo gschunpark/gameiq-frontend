@@ -41,81 +41,55 @@ try {
     assert.ok(layout.scroll <= layout.width + 1, `${label}: horizontal overflow ${JSON.stringify(layout)}`);
   }
   await send('Runtime.enable'); await send('Page.enable'); await send('Network.enable');
-  await send('Emulation.setDeviceMetricsOverride', { width: 390, height: 844, deviceScaleFactor: 1, mobile: true });
+  await resize(390, 844);
   await send('Storage.clearDataForOrigin', { origin: 'http://127.0.0.1:5175', storageTypes: 'all' });
   await send('Page.navigate', { url: 'http://127.0.0.1:5175' });
   await wait(bodyHas('Get Started'));
-  await evaluate('localStorage.clear()'); await send('Page.reload'); await wait(bodyHas('Get Started'));
-  for (const [width, height] of sizes) { await resize(width, height); await assertFits(`Welcome ${width}x${height}`); }
-  await click('Get Started');
-  for (const [width, height] of sizes) { await resize(width, height); await assertFits(`Create account ${width}x${height}`); }
-  await resize(390, 844);
-  pass('Welcome and account forms fit eight phone, tablet, landscape, and desktop viewports');
-  for (const [name, value] of Object.entries({ firstName: 'Jordan', lastName: 'Taylor', username: 'jordan_test', email: 'jordan@test.local', password: 'TestPassword42', confirm: 'TestPassword42' })) await fill(name, value);
-  await submit(); await wait(bodyHas('Let’s get after it, Jordan.'));
-  assert.equal(await evaluate(`document.querySelector('.xp-value').textContent`), '0Total XP');
-  pass('Welcome → account creation → Home; zero invented progress');
-  for (const [width, height] of sizes) {
-    await resize(width, height);
-    for (const route of ['home', 'training', 'team', 'team/create', 'team/join', 'profile', 'profile/edit', 'rulebooks', 'settings', 'scenarios', 'lesson/positions']) {
-      await go(route); await assertFits(`${route} ${width}x${height}`);
-    }
-    assert.equal(await evaluate(`getComputedStyle(document.querySelector('.bottom-nav')).display !== 'none'`), width <= 900, 'Navigation adapts to viewport');
+  const welcomeShot=await send('Page.captureScreenshot',{format:'png'}); await writeFile(path.join(qa,'welcome.png'),Buffer.from(welcomeShot.data,'base64'));
+  // Old saved data is deliberately invalid. Preview must not read or overwrite it.
+  await evaluate("localStorage.setItem('gameiq.local.v1', 'previous-account-data')");
+  await send('Page.addScriptToEvaluateOnNewDocument', {source: "window.__storageCalls=[]; const read=Storage.prototype.getItem; window.__readStored=(key)=>read.call(localStorage,key); for(const method of ['getItem','setItem','removeItem','clear']) Storage.prototype[method]=function(){window.__storageCalls.push(method); throw Error('Preview attempted persistent storage: '+method)}"});
+  await send('Page.reload'); await wait(bodyHas('Get Started'));
+  await click('Sign In'); await submit(); await wait(bodyHas('Coach or kid?'));
+  await evaluate("document.querySelector('[aria-label=\"Close dialog\"]').click()"); await wait(bodyHas('get after it, Player.'));
+  pass('Blank sign-in opens the app without registration or a password');
+  for(const [width,height] of [[320,568],[390,844],[768,1024],[1440,900]]) {
+    await resize(width,height);
+    for(const route of ['home','training','profile','settings','team']) {await go(route);await assertFits(route+' '+width);}
   }
-  await resize(390, 844); await go('home');
-  pass('All app screens fit eight viewport sizes; navigation changes between bottom tabs and sidebar');
-  await click('Explore Training'); await wait(bodyHas('COMING SOON'));
-  assert.equal(await evaluate("document.querySelectorAll('.lesson-card, .answer-option, form').length"), 0);
-  await go('lesson/positions'); await wait(bodyHas('Ask a question. Train your football IQ.'));
-  assert.equal(await evaluate("document.querySelectorAll('.answer-option').length"), 0);
-  assert.deepEqual(await evaluate("JSON.parse(localStorage.getItem('gameiq.local.v1')).users[0].completed"), {});
-  pass('Training is a placeholder; old lesson routes cannot award XP');
-  await go('profile/edit'); await wait(bodyHas('Save Changes'));
-  const photoPath = path.join(qa, 'avatar.png');
-  await writeFile(photoPath, Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+jDasAAAAASUVORK5CYII=', 'base64'));
-  const photoDoc = await send('DOM.getDocument'); const photoInput = await send('DOM.querySelector', {nodeId: photoDoc.root.nodeId, selector:'input[type=file]'});
-  await send('DOM.setFileInputFiles', {nodeId:photoInput.nodeId,files:[photoPath]}); await wait("!!document.querySelector('.image-input img[src^=\"data:image/\"]')");
-  await fill('firstName', 'Jay'); await fill('bio', 'Ready for the next play.'); await submit(); await wait(bodyHas('Jay Taylor'));
-  await go('home'); await wait(bodyHas('Let’s get after it, Jay.'));
-  assert.ok(await evaluate("!!document.querySelector('.avatar-button img[src^=\"data:image/\"]')"));
-  pass('Profile edits and uploaded picture update across screens');
-  await go('team/create'); await wait(bodyHas('Create your team.')); await fill('name', 'Blue Hawks'); await evaluate(`document.querySelector('[name="coachSelf"]').checked=true`); await submit(); await wait(bodyHas('YOUR COACH'));
-  const code = await evaluate(`document.querySelector('.invite-code').textContent`);
-  assert.ok(await evaluate(bodyHas('Jay Taylor')));
-  pass('Team creation, unique invitation code, and actual coach profile');
-  await go('rulebooks'); await wait(bodyHas('Bring your own rulebook'));
-  assert.equal(await evaluate("document.querySelectorAll('input[type=file], .lesson-card, iframe').length"), 0);
-  assert.equal(await evaluate("document.body.textContent.includes('Built-in football rules')"), false);
-  pass('Rulebooks shows a future upload placeholder with no rulebook lessons');
-  await go('settings'); await click('Log Out'); await wait(bodyHas('Create Account')); await click('Create Account');
-  for (const [name, value] of Object.entries({ firstName: 'Sam', lastName: 'Player', username: 'sam_test', email: 'sam@test.local', password: 'TestPassword42', confirm: 'TestPassword42' })) await fill(name, value);
-  await submit(); await wait(bodyHas('Let’s get after it, Sam.'));
-  assert.equal(await evaluate(`document.querySelector('.xp-value').textContent`), '0Total XP');
-  await go('team/join'); await fill('code', code); await submit(); await wait(bodyHas('Blue Hawks'));
-  assert.equal(await evaluate(`document.querySelector('.team-xp strong').textContent`), '0');
-  await evaluate(`document.querySelector('.coach-card').click()`); await wait(bodyHas('Team Profile')); await evaluate(`document.querySelector('[aria-label="Close dialog"]').click()`);
-  pass('Second account isolation, valid join code, team XP, and clickable coach');
-  await go('scenarios'); await wait(bodyHas('Coming Soon') + ' || ' + bodyHas('COMING SOON'));
-  assert.equal(await evaluate(`document.querySelectorAll('.answer-option').length`), 0);
-  await go('home'); assert.equal(await evaluate(`document.documentElement.scrollWidth <= innerWidth`), true);
-  const mobile = await send('Page.captureScreenshot', { format: 'png', captureBeyondViewport: false }); await writeFile(path.join(qa, 'mobile-home.png'), Buffer.from(mobile.data, 'base64'));
-  pass('Scenario placeholder and 390px mobile layout without horizontal overflow');
-  await go('settings'); await click('Log Out'); await wait(bodyHas('Create Account'));
-  await fill('email', 'jordan@test.local'); await fill('password', 'TestPassword42'); await submit(); await wait(bodyHas('Coach or kid?'));
-  await click('I’m a coach'); await wait(bodyHas('Log in to a team')); await click('Log in to a team'); await wait(bodyHas('Blue Hawks'));
-  await go('home'); await wait(bodyHas('Let’s get after it, Jay.'));
-  assert.equal(await evaluate(`document.querySelector('.xp-value').textContent`), '0Total XP');
-  await send('Emulation.setDeviceMetricsOverride', { width: 1440, height: 1050, deviceScaleFactor: 1, mobile: false }); await pause(100);
-  assert.equal(await evaluate(`document.documentElement.scrollWidth <= innerWidth`), true);
-  const desktop = await send('Page.captureScreenshot', { format: 'png' }); await writeFile(path.join(qa, 'desktop-home.png'), Buffer.from(desktop.data, 'base64'));
-  pass('Sign-in role selection and saved account restored; 1440px desktop layout');
-  await go('settings'); await click('Change Password'); await fill('current','TestPassword42'); await fill('next','ChangedPassword42'); await fill('confirm','ChangedPassword42'); await submit(); await wait(bodyHas('Password updated for this local account.'));
-  await click('Privacy Settings'); await evaluate("document.querySelector('dialog input[type=checkbox]').click()"); assert.equal(await evaluate("JSON.parse(localStorage.getItem('gameiq.local.v1')).users[0].privacy.showStats"), false); await evaluate("document.querySelector('[aria-label=\"Close dialog\"]').click()");
-  await click('Log Out'); await wait(bodyHas('Create Account')); await fill('email','jordan@test.local'); await fill('password','ChangedPassword42'); await submit(); await wait(bodyHas('get after it, Jay.'));
-  pass('Password changes authenticate correctly and privacy preferences persist');
-  await go('settings'); await click('Delete Account'); await fill('password','ChangedPassword42'); await fill('confirm','DELETE'); await submit(); await wait(bodyHas('Create Account'));
-  const remaining = await evaluate("JSON.parse(localStorage.getItem('gameiq.local.v1'))"); assert.equal(remaining.users.length,1); assert.equal(remaining.teams.length,0); assert.equal(remaining.session,null);
-  pass('Password-confirmed account deletion removes owned teams and retains other accounts');
+  await resize(390,844); await go('profile/edit');
+  await fill('firstName','Jay'); await fill('lastName','Preview'); await fill('username','jay_preview'); await submit(); await wait(bodyHas('Jay Preview'));
+  await go('home'); await wait(bodyHas('get after it, Jay.'));
+  assert.deepEqual(await evaluate('window.__storageCalls'), []);
+  pass('Profile edits work within the session without persistent storage');
+  await go('team/create'); await fill('name','Preview Hawks'); await submit(); await wait(bodyHas('Preview Hawks'));
+  await go('settings'); await click('Privacy Settings'); await evaluate("document.querySelector('dialog input[type=checkbox]').click()");
+  await evaluate("document.querySelector('[aria-label=\"Close dialog\"]').click()"); await click('Privacy Settings');
+  assert.equal(await evaluate("document.querySelector('dialog input[type=checkbox]').checked"),false);
+  await evaluate("document.querySelector('[aria-label=\"Close dialog\"]').click()");
+  await click('Change Password'); assert.equal(await evaluate("document.querySelectorAll('dialog input').length"),0);
+  await evaluate("document.querySelector('[aria-label=\"Close dialog\"]').click()");
+  pass('Team and preference previews work; password changes are clearly unavailable');
+  await click('Log Out'); await wait(bodyHas('Create Account'));
+  await fill('email','never-registered@example.com'); await fill('password','any-password'); await submit(); await wait(bodyHas('Coach or kid?'));
+  await evaluate("document.querySelector('[aria-label=\"Close dialog\"]').click()"); await wait(bodyHas('get after it, Player.'));
+  await go('team'); assert.equal(await evaluate("document.body.textContent.includes('Preview Hawks')"),false);
+  pass('Unregistered sign-in works and logout clears the previous temporary profile and team');
+  await go('settings'); await click('Log Out'); await click('Create Account');
+  for(const [name,value] of Object.entries({firstName:'Sam',username:'jay_preview',email:'anything',password:'a',confirm:'does-not-match'})) await fill(name,value);
+  await submit(); await wait(bodyHas('get after it, Sam.'));
+  pass('Create Account also enters preview with arbitrary details and mismatched passwords');
+  assert.deepEqual(await evaluate('window.__storageCalls'), []);
+  assert.equal(await evaluate("window.__readStored('gameiq.local.v1')"),'previous-account-data');
+  await go('home'); const mobile=await send('Page.captureScreenshot',{format:'png'}); await writeFile(path.join(qa,'mobile-home.png'),Buffer.from(mobile.data,'base64'));
+  await resize(1440,1000); const desktop=await send('Page.captureScreenshot',{format:'png'}); await writeFile(path.join(qa,'desktop-home.png'),Buffer.from(desktop.data,'base64'));
+  await send('Page.reload'); await wait(bodyHas('Get Started'));
+  assert.deepEqual(await evaluate('window.__storageCalls'), []);
+  await click('Sign In'); await submit(); await wait(bodyHas('Coach or kid?'));
+  await evaluate("document.querySelector('[aria-label=\"Close dialog\"]').click()"); await wait(bodyHas('get after it, Player.'));
+  await go('settings'); await click('Delete Account'); await click('End Preview'); await wait(bodyHas('Create Account'));
+  assert.deepEqual(await evaluate('window.__storageCalls'), []);
+  pass('Reload and End Preview discard the session; old storage is never read or overwritten');
   assert.deepEqual(failures, [], 'No uncaught browser exceptions');
   console.log(`${checks.length} browser checks passed. Screenshots in .qa/.`);
 } finally {

@@ -12,7 +12,7 @@ export function joinTeam(db, userId, code) {
   if (!db.users.some(u => u.id === userId)) throw new Error('Sign in before joining a team.');
   if (teamForUser(db, userId)) throw new Error('You already belong to a team.');
   const team = db.teams.find(t => t.code === code.trim().toUpperCase());
-  if (!team) throw new Error('No team with that code exists in this browser. Shared team codes need a server.');
+  if (!team) throw new Error('No team with that code is available in this preview. Shared team codes need a server.');
   return { ...db, teams: db.teams.map(t => t.id === team.id ? { ...t, memberIds: [...t.memberIds, userId] } : t) };
 }
 export function editTeam(db, actorId, teamId, changes) {
