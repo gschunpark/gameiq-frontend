@@ -1,0 +1,15 @@
+import React, { useState } from 'react';
+import { useApp } from '../data/AppContext';
+import { categories, lessons } from '../lessons/content';
+import { Button, Icon, PageHeading, Panel } from '../components/UI';
+
+export default function Training({ category = 'all' }) {
+  const { user, navigate } = useApp();
+  const [search, setSearch] = useState('');
+  const filtered = lessons.filter(l => (category === 'all' || l.category === category) && `${l.title} ${l.description}`.toLowerCase().includes(search.toLowerCase()));
+  return <><PageHeading eyebrow="TRAIN YOUR FOOTBALL MIND" title="The training ground." description="Real knowledge. Clear explanations. One lesson at a time." action={<Button secondary icon="book" onClick={() => navigate('rulebooks')}>Rulebooks</Button>} />
+    <div className="training-tools"><div className="filter-tabs" aria-label="Training categories">{[{ id: 'all', title: 'All lessons' }, ...categories].map(c => <button key={c.id} aria-pressed={category === c.id} className={category === c.id ? 'active' : ''} onClick={() => navigate(c.id === 'all' ? 'training' : `training/${c.id}`)}>{c.title}</button>)}</div><label className="search-label"><span className="sr-only">Search lessons</span><input className="search-input" placeholder="Search the playbook…" value={search} onChange={e => setSearch(e.target.value)} /></label></div>
+    <p className="muted small">{filtered.length} lessons · XP is awarded once per lesson. Review anytime.</p><div className="lesson-grid">{filtered.map(l => <Panel className="lesson-card" key={l.id}><div className="row between"><span className="feature-icon"><Icon name={categories.find(c => c.id === l.category).icon} /></span><span className={`pill ${user.completed[l.id] ? 'completed' : ''}`}>{user.completed[l.id] ? <><Icon name="check" size={14} /> COMPLETED</> : `+${l.xp} XP`}</span></div><p className="app-eyebrow">{categories.find(c => c.id === l.category).title}</p><h2>{l.title}</h2><p className="muted">{l.description}</p><div className="lesson-meta"><span><Icon name="clock" size={15} /> {l.minutes}-minute lesson</span><b>+{l.xp} XP {user.completed[l.id] ? 'earned' : ''}</b></div><Button secondary={!!user.completed[l.id]} onClick={() => navigate(`lesson/${l.id}`)} icon="arrow">{user.completed[l.id] ? 'Review Lesson' : user.progress[l.id] !== undefined ? 'Resume Lesson' : 'Start Lesson'}</Button></Panel>)}</div>{!filtered.length && <Panel><p className="muted">No lessons match your search.</p></Panel>}
+    <div className="two-columns section-space"><button className="resource-card" onClick={() => navigate('scenarios')}><Icon name="route" size={30} /><span><strong>Game Scenarios</strong><small>Real situations. Smarter decisions. Coming soon.</small></span><Icon name="arrow" /></button><button className="resource-card" onClick={() => navigate('rulebooks')}><Icon name="book" size={30} /><span><strong>Your rulebook library</strong><small>Browse rules and keep your team’s PDFs close.</small></span><Icon name="arrow" /></button></div>
+  </>;
+}
