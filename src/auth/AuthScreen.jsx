@@ -34,7 +34,7 @@ export default function AuthScreen({ initialScreen = 'welcome', onSignIn }) {
             <Button type="submit" icon="arrow">{screen === 'signup' ? 'Create Account' : 'Sign In'}</Button>
           </form><p className="auth-switch">{screen === 'signup' ? 'Already have an account?' : 'New to GameIQ?'} <button className="text-button" onClick={() => navigate(screen === 'signup' ? 'signin' : 'signup')}>{screen === 'signup' ? 'Sign In' : 'Create Account'}</button></p>
         </>}
-        <p className="development-note"><Icon name="lock" size={15} /> Preview mode: enter anything or leave the fields blank. No account is created, passwords are ignored, and nothing is saved after you reload or log out.</p>
+        <p className="development-note"><Icon name="lock" size={15} /> Preview mode: enter anything or leave the fields blank. No account is created, passwords are ignored, and profile and team changes reset after reload or logout. Play versions can be saved separately on this device.</p>
       </div><footer className="login-footer"><span>© {new Date().getFullYear()} GAMEIQ</span><span>FOOTBALL TRAINING</span></footer>
     </section>
     {forgot && <Modal title="Password recovery" onClose={() => setForgot(false)}><p className="muted">You do not need a password in preview mode. Close this message and select Sign In to enter. Real accounts and password recovery will be added later.</p><Button onClick={() => setForgot(false)}>Back to Sign In</Button></Modal>}

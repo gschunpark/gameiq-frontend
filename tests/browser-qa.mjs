@@ -1,3 +1,4 @@
+import { checkPlayEditor } from './play-editor.browser.mjs';
 import { spawn } from 'node:child_process';
 import { mkdir, writeFile, readFile } from 'node:fs/promises';
 import { createServer } from 'node:http';
@@ -48,7 +49,7 @@ try {
   const welcomeShot=await send('Page.captureScreenshot',{format:'png'}); await writeFile(path.join(qa,'welcome.png'),Buffer.from(welcomeShot.data,'base64'));
   // Old saved data is deliberately invalid. Preview must not read or overwrite it.
   await evaluate("localStorage.setItem('gameiq.local.v1', 'previous-account-data')");
-  await send('Page.addScriptToEvaluateOnNewDocument', {source: "window.__storageCalls=[]; const read=Storage.prototype.getItem; window.__readStored=(key)=>read.call(localStorage,key); for(const method of ['getItem','setItem','removeItem','clear']) Storage.prototype[method]=function(){window.__storageCalls.push(method); throw Error('Preview attempted persistent storage: '+method)}"});
+  await send('Page.addScriptToEvaluateOnNewDocument', {source: "window.__storageCalls=[]; const read=Storage.prototype.getItem; window.__readStored=(key)=>read.call(localStorage,key); for(const method of ['getItem','setItem','removeItem','clear']) {const original=Storage.prototype[method]; Storage.prototype[method]=function(){if(this===localStorage && arguments[0]==='gameiq.play-versions.v1') return original.apply(this,arguments); window.__storageCalls.push(method); throw Error('Preview attempted account storage: '+method)}}"});
   await send('Page.reload'); await wait(bodyHas('Get Started'));
   await click('Sign In'); await submit(); await wait(bodyHas('Coach or kid?'));
   await evaluate("document.querySelector('[aria-label=\"Close dialog\"]').click()"); await wait(bodyHas('get after it, Player.'));
@@ -90,6 +91,7 @@ try {
   await go('settings'); await click('Delete Account'); await click('End Preview'); await wait(bodyHas('Create Account'));
   assert.deepEqual(await evaluate('window.__storageCalls'), []);
   pass('Reload and End Preview discard the session; old storage is never read or overwritten');
+  await checkPlayEditor({send,evaluate,wait,click,go,bodyHas,resize,assertFits,pass,qa});
   assert.deepEqual(failures, [], 'No uncaught browser exceptions');
   console.log(`${checks.length} browser checks passed. Screenshots in .qa/.`);
 } finally {

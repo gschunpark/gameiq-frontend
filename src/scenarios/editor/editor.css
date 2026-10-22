@@ -1,0 +1,81 @@
+.editor-entry { width: 100%; margin-top: 12px; padding-top: 16px; border-top: 1px solid var(--line); }
+.play-editor { min-width: 0; }
+.editor-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 22px; margin-bottom: 18px; }
+.editor-heading > div { max-width: 650px; }
+.editor-heading h2 { font-size: 26px; }
+.editor-heading .text-button { flex-shrink: 0; }
+.editor-note { padding: 14px 18px; border: 1px solid #e4eaf6; border-radius: 13px; background: #f8faff; color: #68768e; font-size: 11px; line-height: 1.8; }
+.editor-workspace { padding: 22px; margin-top: 20px; }
+.editor-actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 18px; }
+.editor-actions .app-button { min-height: 42px; font-size: 11px; padding: 10px 14px; }
+.editor-visibility { display: inline-flex; align-items: center; gap: 7px; font-size: 10px; color: #68768e; margin-left: auto; }
+.editor-tools, .editor-preview-tabs { display: flex; flex-wrap: wrap; gap: 7px; padding: 10px; background: #f6f8fc; border: 1px solid #e9edf5; border-radius: 14px; margin-bottom: 18px; }
+.editor-tools button, .editor-preview-tabs button { border: 1px solid transparent; padding: 9px 12px; border-radius: 9px; color: #63718a; background: transparent; font-size: 11px; cursor: pointer; }
+.editor-tools button.active, .editor-preview-tabs button.active { color: #2859e8; background: #fff; border-color: #dde6ff; box-shadow: 0 2px 8px #2859e80a; font-weight: 700; }
+.editor-selection { display: flex; flex-wrap: wrap; align-items: end; gap: 16px 22px; }
+.editor-selection .field { min-width: 185px; flex: 1 1 185px; max-width: 300px; }
+.editor-selection .checkbox-label { flex: 1 1 230px; margin-bottom: 10px; font-size: 11px; }
+.editor-help { color: #7b879b; font-size: 11px; margin: 15px 0; }
+.editor-field-wrap { max-width: 810px; margin: 0 auto; border: 1px solid #e4eaf3; border-radius: 16px; overflow: hidden; background: #fff; }
+.play-field { display: block; width: 100%; max-height: 760px; user-select: none; -webkit-user-select: none; }
+.play-field.is-editable { cursor: crosshair; }
+.editor-legend { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 9px 18px; padding: 16px 0 2px; color: #7c879a; font-size: 9px; }
+.editor-legend > span { display: inline-flex; align-items: center; gap: 6px; }
+.editor-legend i { width: 8px; height: 8px; border-radius: 50%; }
+.offense-key { background: #2859e8; }.defense-key { background: #db4656; }.first-down-key { background: #ffce48; }
+.editor-coordinate-form { display: flex; flex-wrap: wrap; align-items: end; gap: 12px; padding-top: 22px; }
+.editor-coordinate-form .field { flex: 1 1 150px; }
+.editor-coordinate-form .app-button { font-size: 11px; min-height: 46px; }
+.editor-assignment-list { margin-top: 20px; border-top: 1px solid #e8edf5; padding-top: 18px; font-size: 12px; color: #68768e; }
+.editor-assignment-list summary { cursor: pointer; color: #425674; }
+.editor-assignment-list > div { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-top: 14px; }
+.editor-assignment-list .text-button { font-size: 11px; }
+.editor-comparison { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.editor-comparison figure { margin: 0; border: 1px solid #e6ebf4; border-radius: 14px; overflow: hidden; }
+.editor-comparison figcaption { padding: 13px 16px; border-bottom: 1px solid #e6ebf4; font-size: 12px; font-weight: 700; color: #465b79; background: #fafbfe; }
+.editor-save-area { display: grid; gap: 18px; border-top: 1px solid #e8edf5; margin-top: 20px; padding-top: 20px; }
+.editor-save-area .field { max-width: 520px; }
+.editor-save-area .checkbox-label { font-size: 12px; }
+.editor-warnings { padding: 18px 22px; border: 1px solid #f4e0a0; border-radius: 16px; background: #fff9e6; margin-top: 18px; color: #876722; font-size: 12px; }
+.editor-warnings ul { padding-left: 20px; margin: 12px 0; }
+.editor-warnings li { margin-bottom: 7px; line-height: 1.6; }
+.editor-warnings p { margin-bottom: 0; font-size: 10px; }
+.editor-warnings a { text-decoration: underline; }
+.editor-message { color: #405e8b; font-size: 12px; padding: 12px 16px; background: #f0f5ff; border: 1px solid #e0e9fc; border-radius: 10px; }
+.editor-review-actions { display: flex; flex-wrap: wrap; gap: 12px 20px; margin: 20px 0; }
+.editor-change-list { display: grid; gap: 16px; margin-bottom: 22px; }
+.editor-change { border: 1px solid #e5eaf3; border-radius: 14px; padding: 18px; }
+.editor-change .checkbox-label { align-items: flex-start; font-size: 12px; line-height: 1.7; }
+.editor-change .checkbox-label input { margin-top: 2px; }
+.editor-change .field { margin: 12px 0; font-size: 11px; }
+.editor-change .play-field { max-height: 190px; border: 1px solid #edf0f6; border-radius: 10px; margin-bottom: 12px; }
+.editor-change .text-button { font-size: 11px; }
+.editor-version-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr)); gap: 16px; }
+.editor-version-card { min-width: 0; padding: 20px; }
+.editor-version-card h3 { overflow-wrap: anywhere; }
+.editor-version-card .play-field { max-height: 230px; border: 1px solid #e9edf5; border-radius: 12px; }
+.editor-version-card .text-button { font-size: 11px; }
+.editor-version-card .row { justify-content: space-between; }
+@media (max-width: 900px) {
+  .editor-heading { flex-wrap: wrap; }
+  .editor-tools button, .editor-preview-tabs button { min-height: 40px; }
+  .editor-review-actions .text-button { min-height: 40px; }
+}
+@media (max-width: 600px) {
+  .editor-workspace { padding: 14px; }
+  .editor-heading h2 { font-size: 22px; }
+  .editor-actions { gap: 8px; }
+  .editor-actions .app-button { flex: 1 1 110px; font-size: 10px; padding: 10px; }
+  .editor-visibility { margin-left: 0; flex-basis: 100%; min-height: 32px; }
+  .editor-tools { gap: 4px; padding: 7px; }
+  .editor-tools button { flex: 1 1 82px; padding: 8px; font-size: 10px; }
+  .editor-comparison { grid-template-columns: minmax(0, 1fr); }
+  .editor-selection .field { max-width: none; flex-basis: 100%; }
+  .editor-selection .checkbox-label { margin-bottom: 0; }
+  .editor-note { padding: 12px 14px; font-size: 10px; }
+  .editor-legend { gap: 8px 11px; font-size: 8px; }
+  .editor-change { padding: 14px; }
+  .editor-change .play-field { max-height: 160px; }
+  .editor-coordinate-form .field { flex-basis: 100%; }
+  .editor-coordinate-form .app-button { width: 100%; }
+}
