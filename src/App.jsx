@@ -35,7 +35,7 @@ export default function App() {
   function saveUser(changes) { commit(current => updateUser(current, current.session, changes)); }
   function navigate(to) { if (location.hash.slice(1) === to) setRoute(to); else location.hash = to; }
   function logout() { commit(emptyDatabase()); setSetup(false); setNotifications(false); setAuthScreen('signin'); navigate('home'); }
-  if (!user) return <AuthScreen initialScreen={authScreen} onSignIn={(signedIn, returning) => { commit({ ...emptyDatabase(), users: [signedIn], session: signedIn.id }); navigate('home'); setSetup(returning); }} />;
+  if (!user) return <AuthScreen initialScreen={authScreen} onSignIn={(signedIn, returning) => { commit({ ...emptyDatabase(), users: [signedIn], session: signedIn.id }); navigate('home'); setSetup(!returning); }} />;
   const [page, detail] = route.split('/');
   const active = ['training', 'lesson', 'rulebooks', 'scenarios'].includes(page) ? 'training' : ['profile', 'settings'].includes(page) ? 'profile' : page === 'team' ? 'team' : 'home';
   const tabs = [{ id: 'home', title: 'Home', icon: 'home' }, { id: 'training', title: 'Training', icon: 'football' }, { id: 'team', title: 'My Team', icon: 'team' }, { id: 'profile', title: 'Profile', icon: 'user' }];

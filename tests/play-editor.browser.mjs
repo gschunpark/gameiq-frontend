@@ -26,7 +26,7 @@ export async function checkPlayEditor({ send, evaluate, wait, click, go, bodyHas
     }
   };
   if (!await evaluate('!!document.querySelector("form")')) await click('Sign In');
-  await wait('!!document.querySelector("form")'); await evaluate('document.querySelector("form").requestSubmit()'); await wait(bodyHas('Coach or kid?')); await closeModal();
+  await wait('!!document.querySelector("form")'); await evaluate('document.querySelector("form").requestSubmit()'); await wait(bodyHas('get after it, Player.'));
   await resize(1440, 1200); await go('scenarios'); await click('Open Play Editor'); await wait(bodyHas('Edit Play'));
   assert.equal(await evaluate(`${mainField}.querySelectorAll('[data-player-id]').length`), 22);
   const baseline = await assignments(), wr1 = baseline['WR1-route'];
@@ -97,7 +97,7 @@ export async function checkPlayEditor({ send, evaluate, wait, click, go, bodyHas
   const mobile=await send('Page.captureScreenshot',{format:'png'}); await writeFile(path.join(qa,'play-editor-mobile.png'),Buffer.from(mobile.data,'base64'));
   pass('Touch drawing works on phones; alignment warnings block unreviewed saves and can be corrected; editor fits four device sizes');
   assert.deepEqual(await evaluate('window.__storageCalls'),[]);
-  await send('Page.reload'); await wait(bodyHas('Get Started')); await click('Sign In'); await evaluate('document.querySelector("form").requestSubmit()'); await wait(bodyHas('Coach or kid?')); await closeModal();
+  await send('Page.reload'); await wait(bodyHas('Get Started')); await click('Sign In'); await evaluate('document.querySelector("form").requestSubmit()'); await wait(bodyHas('get after it, Player.'));
   await go('scenarios'); await click('Open Play Editor'); await wait(bodyHas('Saved play versions'));
   assert.equal(await evaluate("document.querySelectorAll('.editor-version-card').length"),3);
   await openRecord('Back Left'); await wait(bodyHas('Edit Play'));

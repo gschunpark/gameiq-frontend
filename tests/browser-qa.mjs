@@ -51,8 +51,8 @@ try {
   await evaluate("localStorage.setItem('gameiq.local.v1', 'previous-account-data')");
   await send('Page.addScriptToEvaluateOnNewDocument', {source: "window.__storageCalls=[]; const read=Storage.prototype.getItem; window.__readStored=(key)=>read.call(localStorage,key); for(const method of ['getItem','setItem','removeItem','clear']) {const original=Storage.prototype[method]; Storage.prototype[method]=function(){if(this===localStorage && arguments[0]==='gameiq.play-versions.v1') return original.apply(this,arguments); window.__storageCalls.push(method); throw Error('Preview attempted account storage: '+method)}}"});
   await send('Page.reload'); await wait(bodyHas('Get Started'));
-  await click('Sign In'); await submit(); await wait(bodyHas('Coach or kid?'));
-  await evaluate("document.querySelector('[aria-label=\"Close dialog\"]').click()"); await wait(bodyHas('get after it, Player.'));
+  await click('Sign In'); await submit(); await wait(bodyHas('get after it, Player.'));
+  assert.equal(await evaluate("document.querySelectorAll('dialog[open]').length"), 0);
   pass('Blank sign-in opens the app without registration or a password');
   for(const [width,height] of [[320,568],[390,844],[768,1024],[1440,900]]) {
     await resize(width,height);
@@ -72,13 +72,17 @@ try {
   await evaluate("document.querySelector('[aria-label=\"Close dialog\"]').click()");
   pass('Team and preference previews work; password changes are clearly unavailable');
   await click('Log Out'); await wait(bodyHas('Create Account'));
-  await fill('email','never-registered@example.com'); await fill('password','any-password'); await submit(); await wait(bodyHas('Coach or kid?'));
-  await evaluate("document.querySelector('[aria-label=\"Close dialog\"]').click()"); await wait(bodyHas('get after it, Player.'));
+  await fill('email','never-registered@example.com'); await fill('password','any-password'); await submit(); await wait(bodyHas('get after it, Player.'));
+  assert.equal(await evaluate("document.querySelectorAll('dialog[open]').length"), 0);
   await go('team'); assert.equal(await evaluate("document.body.textContent.includes('Preview Hawks')"),false);
   pass('Unregistered sign-in works and logout clears the previous temporary profile and team');
   await go('settings'); await click('Log Out'); await click('Create Account');
   for(const [name,value] of Object.entries({firstName:'Sam',username:'jay_preview',email:'anything',password:'a',confirm:'does-not-match'})) await fill(name,value);
-  await submit(); await wait(bodyHas('get after it, Sam.'));
+  await submit(); await wait(bodyHas('Coach or kid?'));
+  await click('I’m a coach'); await wait(bodyHas('What’s your next move?'));
+  await click('Create a team'); await wait(bodyHas('Create your team.'));
+  await go('profile'); await wait(bodyHas('FOOTBALL COACH'));
+  await go('home'); await wait(bodyHas('get after it, Sam.'));
   pass('Create Account also enters preview with arbitrary details and mismatched passwords');
   assert.deepEqual(await evaluate('window.__storageCalls'), []);
   assert.equal(await evaluate("window.__readStored('gameiq.local.v1')"),'previous-account-data');
@@ -86,8 +90,8 @@ try {
   await resize(1440,1000); const desktop=await send('Page.captureScreenshot',{format:'png'}); await writeFile(path.join(qa,'desktop-home.png'),Buffer.from(desktop.data,'base64'));
   await send('Page.reload'); await wait(bodyHas('Get Started'));
   assert.deepEqual(await evaluate('window.__storageCalls'), []);
-  await click('Sign In'); await submit(); await wait(bodyHas('Coach or kid?'));
-  await evaluate("document.querySelector('[aria-label=\"Close dialog\"]').click()"); await wait(bodyHas('get after it, Player.'));
+  await click('Sign In'); await submit(); await wait(bodyHas('get after it, Player.'));
+  assert.equal(await evaluate("document.querySelectorAll('dialog[open]').length"), 0);
   await go('settings'); await click('Delete Account'); await click('End Preview'); await wait(bodyHas('Create Account'));
   assert.deepEqual(await evaluate('window.__storageCalls'), []);
   pass('Reload and End Preview discard the session; old storage is never read or overwritten');
