@@ -1,4 +1,5 @@
 import { checkPlayEditor } from './play-editor.browser.mjs';
+import { checkDummyLevel } from './dummy-level.browser.mjs';
 import { spawn } from 'node:child_process';
 import { mkdir, writeFile, readFile } from 'node:fs/promises';
 import { createServer } from 'node:http';
@@ -95,6 +96,9 @@ try {
   await go('settings'); await click('Delete Account'); await click('End Preview'); await wait(bodyHas('Create Account'));
   assert.deepEqual(await evaluate('window.__storageCalls'), []);
   pass('Reload and End Preview discard the session; old storage is never read or overwritten');
+  if (!await evaluate('!!document.querySelector("form")')) await click('Sign In');
+  await wait('!!document.querySelector("form")'); await submit(); await wait(bodyHas('get after it, Player.'));
+  await checkDummyLevel({evaluate,wait,click,go,bodyHas,resize,assertFits,pass});
   await checkPlayEditor({send,evaluate,wait,click,go,bodyHas,resize,assertFits,pass,qa});
   assert.deepEqual(failures, [], 'No uncaught browser exceptions');
   console.log(`${checks.length} browser checks passed. Screenshots in .qa/.`);
