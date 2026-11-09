@@ -9,9 +9,9 @@
     "build": "vite build",
     "preview": "vite preview",
     "dev:client": "vite",
-    "dev:server": "node --watch server/index.js",
-    "start:server": "node server/index.js",
-    "test:smoke": "node --env-file=.env server/smoke.js"
+    "dev:server": "node --watch backend/index.js",
+    "start:server": "node backend/index.js",
+    "test:smoke": "node --env-file=.env backend/smoke.js"
   },
   "dependencies": {
     "@vitejs/plugin-react": "^4.4.1",
