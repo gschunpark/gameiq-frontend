@@ -33,6 +33,20 @@ test('wrong answers never advance or award progress; retry keeps the scenario an
   assert.equal(run.index, 1);
   assert.equal(run.attempts, 2);
 });
+test('wrong tries accumulate per question and reset on the next play and replay', () => {
+  let run = initialRun();
+  for (let attempt = 1; attempt <= 3; attempt++) {
+    run = answerPlay(run, 0);
+    assert.equal(run.wrongOnPlay, attempt);
+    assert.equal(run.correct, 0);
+    run = advancePlay(run);
+    assert.equal(run.wrongOnPlay, attempt);
+  }
+  run = advancePlay(answerPlay(run, plays[0].correct));
+  assert.equal(run.wrongOnPlay, 0);
+  assert.equal(run.incorrect, 3);
+  assert.equal(initialRun().wrongOnPlay, 0);
+});
 test('only five correct plays complete the level; XP is added once and history survives replay', () => {
   const user = { completed: { earlier: { at: 'old', xp: 25 } }, progress: {} };
   let run = initialRun();

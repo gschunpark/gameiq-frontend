@@ -1,0 +1,8 @@
+.level-generator form { display: grid; gap: 16px; margin-top: 20px; }
+.level-generator .field { min-width: 0; }
+.level-generator textarea { width: 100%; min-height: 100px; padding: 12px; border: 1px solid #c3cddd; border-radius: 10px; font: inherit; resize: vertical; box-sizing: border-box; }
+.level-generator input[type=file] { max-width: 100%; }
+.clip-preview { display: grid; gap: 12px; min-width: 0; }
+.clip-preview video { display: block; width: 100%; max-height: 420px; background: #111827; border-radius: 10px; }
+.selected-frame { display: block; max-width: 100%; max-height: 260px; width: auto; height: auto; border-radius: 10px; }
+.selected-frame.hidden { display: none; }

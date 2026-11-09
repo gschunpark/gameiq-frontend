@@ -82,17 +82,24 @@ export const plays = [
     ] }),
 ];
 
-export function initialRun() { return { index: 0, correct: 0, attempts: 0, incorrect: 0, selected: null, finished: false }; }
-export function answerPlay(state, answer) {
+export const playHints = [
+  'Compare how much space each eligible receiver has. A useful gain does not have to be a deep throw.',
+  'Watch where the pressure comes from and which space opens up when a defender rushes.',
+  'Follow the defender responsible for the flat. Which depth becomes less protected?',
+  'Watch the direction the defenders flow and the space your blockers create.',
+  'Compare each receiving window with the yellow line and the nearest defender.',
+];
+export function initialRun() { return { index: 0, correct: 0, attempts: 0, incorrect: 0, wrongOnPlay: 0, selected: null, finished: false }; }
+export function answerPlay(state, answer, levelPlays = plays) {
   if (state.finished || state.selected !== null || !Number.isInteger(answer) || answer < 0 || answer > 3) return state;
-  const correct = answer === plays[state.index].correct;
-  return { ...state, selected: answer, correct: state.correct + Number(correct), attempts: state.attempts + 1, incorrect: state.incorrect + Number(!correct) };
+  const correct = answer === levelPlays[state.index].correct;
+  return { ...state, selected: answer, correct: state.correct + Number(correct), attempts: state.attempts + 1, incorrect: state.incorrect + Number(!correct), wrongOnPlay: state.wrongOnPlay + Number(!correct) };
 }
-export function advancePlay(state) {
+export function advancePlay(state, levelPlays = plays) {
   if (state.selected === null) return state;
-  if (state.selected !== plays[state.index].correct) return { ...state, selected: null };
-  if (state.correct === plays.length) return { ...state, finished: true };
-  return { ...state, index: state.index + 1, selected: null };
+  if (state.selected !== levelPlays[state.index].correct) return { ...state, selected: null };
+  if (state.correct === levelPlays.length) return { ...state, finished: true };
+  return { ...state, index: state.index + 1, selected: null, wrongOnPlay: 0 };
 }
 export function finishDummyLevel(user, state) {
   if (!state.finished || state.correct !== plays.length) return { user, earned: 0 };

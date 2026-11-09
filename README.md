@@ -1,11 +1,11 @@
 ﻿# GameIQ Football
 
-Responsive React + Vite football app. The original branding and sign-in implementation are preserved. No new dependencies are required.
+Responsive React + Vite football app with an Express endpoint for AI training generation. The original branding and sign-in implementation are preserved.
 
 ## Current feature direction
 
 - Built-in football lessons and rulebook lessons have been removed from the active app.
-- Training is a Coming Soon screen for a future flow where a user asks a football question and AI creates a training experience. No AI request, generation, playable content, or new XP awards are implemented.
+- Training supports a local video upload, a selected still frame, and a question to generate five animated practice scenarios. The authored demo remains available and awards 50 XP once per preview session. Generated practice awards no XP.
 - Rulebooks is a Coming Soon screen for future user-uploaded team rulebooks. Upload and PDF-library controls are not exposed in the active app.
 - Game Scenarios generation remains Coming Soon. Its **Open Play Editor** preview supports editing a clearly labeled authored play with routes, movement, defensive/blocking assignments, selective changes, undo/redo, clean before/after diagrams, device-local versions, and PNG export. Drawing interpretation is local geometry, not a connected AI model. See [editor integration](src/scenarios/editor/README.md).
 - Home and Profile no longer advertise lessons, show lesson totals, or link to the retired lesson reader. Old lesson URLs display the Training placeholder.
@@ -35,4 +35,20 @@ Real shared accounts, recovery emails, cross-device synchronization, shared team
 
 `src/auth`, `home`, `training`, `teams`, `profiles`, `rulebooks`, `settings`, `scenarios`, `xp`, `data`, and `components` separate the main features.
 
-The earlier static lesson implementation is retained in `src/lessons` and `src/training/LessonCatalog.jsx`, and the earlier PDF library implementation in `src/rulebooks/RulebookLibrary.jsx`, for reference. These components are not routed or exposed. Existing data-logic tests continue checking preservation of old XP and account/team behavior. Future training generation and rulebook upload work should be added only when requested.
+The earlier static lesson implementation is retained in `src/lessons` and `src/training/LessonCatalog.jsx`, and the earlier PDF library implementation in `src/rulebooks/RulebookLibrary.jsx`, for reference. These components are not routed or exposed. Existing data-logic tests continue checking preservation of old XP and account/team behavior. Future rulebook upload work should be added only when requested.
+
+## Video-to-level setup
+
+Video uploads are optional. Enter a scenario and question to generate a level without selecting a file. Question-only requests contain just `{ question }`, skip Roboflow, return an empty `predictions` array, and need only `OPENAI_API_KEY`. To include video context, upload a clip and select a frame; `ROBOFLOW_API_KEY` is required only when a frame is included. **Remove selected frame** switches back to question-only generation. When sending a frame, both `image` and `mimeType` must be provided together.
+
+Use Node 22+ and run `npm install`. Copy `.env.example` to `.env` and set `ROBOFLOW_API_KEY` (from [Roboflow settings](https://app.roboflow.com/settings/api)) and `OPENAI_API_KEY`. `OPENAI_MODEL` defaults to `gpt-4.1-mini`. These are server-only secrets: never use `VITE_` prefixes or import server modules into browser code. `.env` is already ignored. No coding-agent instruction or onboarding files exist in this checkout; this section is the integration's developer guidance.
+
+Run `npm run dev` to start Vite and Express together. Alternatively run `npm run dev:client` and `npm run dev:server` in separate terminals. Vite forwards `/api` to `127.0.0.1:3001`; keep `PORT=3001` for this setup. `npm run start:server` runs the API without watch mode. A production host must run the Node service and route `/api` to it on the same origin; a static-only deployment cannot generate levels. This service does not implement account authentication; its per-process IP limit (10 requests/minute) is a basic development guard, not a shared production quota.
+
+In Training, upload a video, scrub to a clear moment, select **Use this frame**, enter the situation and what to fix, then choose **Create my level**. Only the selected JPEG (quality 0.85, longest side at most 1280 px) leaves the browser; the video stays local. The endpoint accepts `{ image: "<raw base64>", mimeType: "image/jpeg" | "image/png", question: "..." }`, limits decoded images to 5 MiB and questions to 2000 characters, and rejects remote URLs. It returns `{ level, predictions }` or `{ error: { code, message } }`. Neither images nor secrets are logged or persisted.
+
+The workflow is `gameiq-bot/american-football-vamerican-football-wo4dt-w754f-1-rfdetr-small-t1-logic`. MCP inspection confirmed one `image` input, no runtime parameters, and one `predictions` output. An OAuth base64 smoke run returned `[{ predictions: { image: { width, height }, predictions: [...] } }]`; the sanitized fixture in `tests/fixtures/roboflow-football.json` records that real response. The currently published JS SDK (`@roboflow/inference-sdk` 0.4.0) only exposes WebRTC methods, so the still-frame client uses REST with `Authorization: Bearer` and bounded retries/timeouts. Roboflow gets the frame; OpenAI gets only the question and six fields per detection (class, x, y, width, height, confidence). No polygons are retained. The workflow declares no image outputs.
+
+`server/level-schema.js` validates the existing demo's play, player route, four-answer tuple, and hint format, including animation-safe references and coordinates. The server retries invalid LLM JSON once and supplies a unique level ID, zero XP, and section metadata. Generated levels use the same animated renderer and answer progression as the demo. Object boxes cannot establish team roles or motion: generated plays are hypothetical practice variations, not factual reconstructions. Levels stay in React memory and disappear on navigation/reload.
+
+Validate with `npm run build` and `npm test`. This repository has no lint script or lint configuration. `node tests/video-level.browser.mjs` exercises capture from an actual browser-recorded WebM, server validation, errors, playback, and all five plays with mocked providers; it needs installed Windows Edge and permission for local ports/subprocesses. `node tests/browser-qa.mjs` runs existing regressions. For a live provider smoke test after setting `.env`, run `npm run test:smoke -- path/to/frame.jpg "Describe the scenario and what to fix"`. This prints only detection/scenario counts. OAuth MCP access is separate from the API keys needed by the local server.
