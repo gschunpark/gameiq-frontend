@@ -17,11 +17,17 @@ export function FieldAnimation({ play, decision, progress, explain, reveal = tru
     positions.RB = pointOnRoute([[250, 415], [285, 380], end], playerTime);
   }
   if (target === 'retreat') positions.QB = [250, 408 + 85 * t];
+  // QB scramble: the quarterback keeps the ball, steps up, then runs into the chosen lane.
+  const scramble = { scrambleLeft: [120, 255], scrambleMiddle: [250, 235], scrambleRight: [380, 255] }[target];
+  if (scramble) {
+    const [x, y] = play.players.find(p => p.id === 'QB')?.points[0] || [250, 408];
+    positions.QB = pointOnRoute([[x, y], [x, y - 35], scramble], playerTime);
+  }
   const qb = positions.QB;
   let ball;
   if (play.run) {
     ball = t < 0.2 ? pointOnRoute([qb, positions.RB], t / 0.2) : positions.RB;
-  } else if (target === 'hold' || target === 'retreat') ball = qb;
+  } else if (target === 'hold' || target === 'retreat' || scramble) ball = qb;
   else {
     const receiver = positions[target] || positions[play.target];
     ball = pointOnRoute([qb, receiver], clamp((t - 0.4) / 0.28));
