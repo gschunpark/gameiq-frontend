@@ -60,7 +60,7 @@ export default function LevelGenerator() {
   if (playing && result) return <FootballLevel key={result.level.id} level={result.level} onExit={() => setPlaying(false)} />;
   return <Panel className="level-generator">
     <h2>Ask a question. Train your football IQ.</h2>
-    <p className="muted">Tell us the scenario and what you want to improve. AI will build five animated practice scenarios. You can optionally add a video and select a frame.</p>
+    <p className="muted">Tell us the scenario and what you want to improve. AI will build animated practice scenarios. You can optionally add a video and select a frame.</p>
     <p className="muted small">The clip stays on your device. Only your selected frame is sent to Roboflow; detections and your question are sent to OpenAI. Scenarios are hypothetical practice, not a reconstruction of the clip.</p>
     <form onSubmit={generate}>
       <label className="field">Upload a football video (optional)<input type="file" accept="video/*" disabled={busy} onChange={e => selectClip(e.target.files?.[0])} /></label>
@@ -71,9 +71,9 @@ export default function LevelGenerator() {
       {frame && <p role="status" className="muted small">Frame selected at {frame.time.toFixed(2)} seconds. Scrub the clip and select again to change it.</p>}
       <label className="field">Your scenario and question<textarea maxLength={2000} required rows={3} disabled={busy} value={question} placeholder="first, say the scenario that is happening. Then say what you want to fix." onChange={e => { setQuestion(e.target.value); setResult(null); }} /></label>
       <Button type="submit" disabled={!question.trim() || busy}>{busy ? 'Creating your level…' : 'Create my level'}</Button>
-      {busy && <p role="status">{frame ? 'Reading the frame and creating five practice scenarios.' : 'Creating five practice scenarios from your question.'} This may take a few minutes.</p>}
+      {busy && <p role="status">{frame ? 'Reading the frame and creating practice scenarios.' : 'Creating practice scenarios from your question.'} This may take a few minutes.</p>}
       {error && <p className="error" role="alert">{error}</p>}
-      {result && <div role="status"><h3>Your level is ready: {result.level.title}</h3><p>{result.predictions.length ? `${result.predictions.length} objects detected · ` : ''}5 practice scenarios</p><Button type="button" onClick={() => setPlaying(true)}>Play generated level</Button></div>}
+      {result && <div role="status"><h3>Your level is ready: {result.level.title}</h3><p>{result.predictions.length ? `${result.predictions.length} objects detected · ` : ''}{result.level.plays.length} practice scenario{result.level.plays.length === 1 ? '' : 's'}</p><Button type="button" onClick={() => setPlaying(true)}>Play generated level</Button></div>}
     </form>
   </Panel>;
 }
