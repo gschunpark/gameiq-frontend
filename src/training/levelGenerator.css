@@ -6,3 +6,6 @@
 .clip-preview video { display: block; width: 100%; max-height: 420px; background: #111827; border-radius: 10px; }
 .selected-frame { display: block; max-width: 100%; max-height: 260px; width: auto; height: auto; border-radius: 10px; }
 .selected-frame.hidden { display: none; }
+.level-generator .generated-levels { list-style: none; padding: 0; margin: 12px 0 0; display: grid; gap: 10px; }
+.level-generator .generated-levels li { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; padding: 12px; border: 1px solid #c3cddd; border-radius: 10px; }
+.level-generator .generated-levels p { margin: 4px 0 0; }

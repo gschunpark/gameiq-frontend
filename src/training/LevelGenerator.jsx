@@ -14,7 +14,7 @@ export default function LevelGenerator() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
   const [result, setResult] = useState(null);
-  const [playing, setPlaying] = useState(false);
+  const [playing, setPlaying] = useState(null); // index of the level being played
   useEffect(() => () => { if (clip) URL.revokeObjectURL(clip.url); }, [clip]);
   useEffect(() => () => request.current?.abort(), []);
 
@@ -51,13 +51,16 @@ export default function LevelGenerator() {
       });
       const data = await response.json().catch(() => null);
       if (!response.ok) throw Error(data?.error?.message || 'Generation is unavailable. Check that the API server is running.');
-      if (!data?.level?.plays?.length || !Array.isArray(data.predictions)) throw Error('The server returned an incomplete level. Please try again.');
-      setResult(data); setFrame(null);
+      // Older servers return a single `level`; newer ones return `levels` (several difficulties).
+      const levels = (Array.isArray(data?.levels) ? data.levels : [data?.level]).filter(l => l?.plays?.length);
+      if (!levels.length || !Array.isArray(data.predictions)) throw Error('The server returned an incomplete level. Please try again.');
+      setResult({ levels, predictions: data.predictions }); setFrame(null);
       canvas.current.width = 0; canvas.current.height = 0;
     } catch (err) { if (request.current === controller) setError(err.name === 'AbortError' ? 'Generation timed out. Please try again.' : err.message); }
     finally { clearTimeout(timer); if (request.current === controller) { request.current = null; setBusy(false); } }
   }
-  if (playing && result) return <FootballLevel key={result.level.id} level={result.level} onExit={() => setPlaying(false)} />;
+  const active = playing !== null && result?.levels[playing];
+  if (active) return <FootballLevel key={active.id} level={active} onExit={() => setPlaying(null)} />;
   return <Panel className="level-generator">
     <h2>Ask a question. Train your football IQ.</h2>
     <p className="muted">Tell us the scenario and what you want to improve. AI will build animated practice scenarios. You can optionally add a video and select a frame.</p>
@@ -73,7 +76,14 @@ export default function LevelGenerator() {
       <Button type="submit" disabled={!question.trim() || busy}>{busy ? 'Creating your level…' : 'Create my level'}</Button>
       {busy && <p role="status">{frame ? 'Reading the frame and creating practice scenarios.' : 'Creating practice scenarios from your question.'} This may take a few minutes.</p>}
       {error && <p className="error" role="alert">{error}</p>}
-      {result && <div role="status"><h3>Your level is ready: {result.level.title}</h3><p>{result.predictions.length ? `${result.predictions.length} objects detected · ` : ''}{result.level.plays.length} practice scenario{result.level.plays.length === 1 ? '' : 's'}</p><Button type="button" onClick={() => setPlaying(true)}>Play generated level</Button></div>}
+      {result && <div role="status">
+        <h3>{result.levels.length === 1 ? 'Your level is ready' : `Your ${result.levels.length} levels are ready`}</h3>
+        {result.predictions.length > 0 && <p className="muted small">{result.predictions.length} objects detected</p>}
+        <ol className="generated-levels">{result.levels.map((level, i) => <li key={level.id}>
+          <div><strong>Level {i + 1}: {level.title}</strong><p className="muted small">{level.plays.length} practice scenario{level.plays.length === 1 ? '' : 's'}</p></div>
+          <Button type="button" onClick={() => setPlaying(i)}>Play level {i + 1}</Button>
+        </li>)}</ol>
+      </div>}
     </form>
   </Panel>;
 }
